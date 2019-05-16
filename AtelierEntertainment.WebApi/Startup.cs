@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AtelierEntertainment.BusinessLogic;
+using AtelierEntertainment.WebApi.Extensions;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,7 +39,9 @@ namespace AtelierEntertainment.WebApi
             {
 	            c.SwaggerDoc("v1", new Info { Title = "Atelier Entertainment API", Version = "v1" });
             });
-        }
+
+			services.AddAutomapperProfiles();
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
