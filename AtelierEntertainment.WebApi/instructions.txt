@@ -1,0 +1,4 @@
+dotnet --list-all-sdks
+dotnet new globaljson --sdk-version 2.1.505 --force
+dotnet new webapi -n AtelierEntertainment.WebApi
+dotnet sln AtelierEntertainment.sln add AtelierEntertainment.WebApi\AtelierEntertainment.WebApi.csproj
