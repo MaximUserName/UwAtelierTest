@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AtelierEntertainment.WebApi.Controllers
 {
+	[Produces("application/json")]
 	[Route("api")]
 	public class OrdersController : CustomApiControllerBase
 	{
@@ -13,6 +14,7 @@ namespace AtelierEntertainment.WebApi.Controllers
 		{
 			_ordersBusinessLogic = ordersBusinessLogic;
 		}
+
 		// GET api/values
 		[HttpGet("customers/{customerId}/orders")]
 		public ActionResult<IEnumerable<string>> GetCustomerOrders(int customerId)
@@ -28,6 +30,7 @@ namespace AtelierEntertainment.WebApi.Controllers
 		}
 
 		// POST api/values
+		[Consumes("application/json")]
 		[HttpPost("orders")]
 		public void CreateOrder([FromBody] string value)
 		{

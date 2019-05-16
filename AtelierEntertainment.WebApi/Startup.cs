@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace AtelierEntertainment.WebApi
 {
@@ -32,20 +33,35 @@ namespace AtelierEntertainment.WebApi
             services.AddScoped<IMapper, Mapper>();
             services.AddScoped<OrderService>();
             services.AddScoped<IOrdersBusinessLogic, OrdersBusinessLogic>();
+
+			services.AddSwaggerGen(c =>
+            {
+	            c.SwaggerDoc("v1", new Info { Title = "Atelier Entertainment API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+	        app.UseStaticFiles();
+
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+			}
+			else
+			{
+			}
+
+			app.UseSwagger();
+           
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-            }
+	            c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseMvc();
-        }
-    }
+
+		}
+	}
 }
