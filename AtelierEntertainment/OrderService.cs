@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AtelierEntertainment
 {
     public class OrderService
     {
-        public void CreateOrder(Order order)
+	    public void CreateOrder(Order order)
         {
             if (order.Customer.Country == "AU")
                 order.Total = Convert.ToDecimal(order.Items.Sum(_ => _.Price) * 1.1);
@@ -17,9 +18,11 @@ namespace AtelierEntertainment
             dataContext.CreateOrder(order);
         }
 
-        public Order ViewOrder()
+        
+        public IEnumerable<Order> GetOrdersByCustomerId(int id)
         {
-            throw new NotImplementedException();
+	        var dataContext = new OrderDataContext();
+			return dataContext.GetCustomerOrders(id);
         }
     }
 }

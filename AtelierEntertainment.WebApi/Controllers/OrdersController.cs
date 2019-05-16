@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using AtelierEntertainment.BusinessLogic;
+using AtelierEntertainment.BusinessLogic.Dtos;
+using AtelierEntertainment.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AtelierEntertainment.WebApi.Controllers
@@ -15,25 +17,25 @@ namespace AtelierEntertainment.WebApi.Controllers
 			_ordersBusinessLogic = ordersBusinessLogic;
 		}
 
-		// GET api/values
 		[HttpGet("customers/{customerId}/orders")]
-		public ActionResult<IEnumerable<string>> GetCustomerOrders(int customerId)
+		public IEnumerable<OrderDto> GetCustomerOrders(int customerId)
 		{
-			return new string[] { "value1", "value2" };
+			return _ordersBusinessLogic.GetOrdersByCustomerId(customerId);
 		}
 
-		// GET api/values/5
 		[HttpGet("orders/{id}")]
-		public ActionResult<string> GetOrder(int id)
+		public OrderDto GetOrder(int id)
 		{
-			return "value";
+			return _ordersBusinessLogic.GetOrderById(id);
 		}
 
-		// POST api/values
 		[Consumes("application/json")]
 		[HttpPost("orders")]
-		public void CreateOrder([FromBody] string value)
+		[ProducesResponseType(typeof(OrderDto), 201)]
+		public IActionResult CreateOrder([FromBody] CreateOrderDto dto)
 		{
+			var createdDto = _ordersBusinessLogic.CreateOrder(dto);
+			return this.Created(createdDto);
 		}
 	}
 }

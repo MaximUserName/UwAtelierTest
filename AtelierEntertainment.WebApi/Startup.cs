@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AtelierEntertainment.BusinessLogic;
+﻿using AtelierEntertainment.BusinessLogic;
 using AtelierEntertainment.WebApi.Extensions;
-using AutoMapper;
+using AtelierEntertainment.WebApi.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace AtelierEntertainment.WebApi
@@ -29,9 +23,22 @@ namespace AtelierEntertainment.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+	            .AddJsonOptions(options =>
+		            {
+			            options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+			            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+			            options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+			            options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+			            options.SerializerSettings.DateParseHandling = DateParseHandling.DateTime;
+			            //options.SerializerSettings.DateFormatString = DateTimeToStringConverter
+			            //options.SerializerSettings.DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+			            //options.SerializerSettings.DateFormatString = ;
+			            // options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+		            })
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddScoped<IMapper, Mapper>();
+            //services.AddScoped<IMapper, Mapper>();
             services.AddScoped<OrderService>();
             services.AddScoped<IOrdersBusinessLogic, OrdersBusinessLogic>();
 
@@ -41,16 +48,25 @@ namespace AtelierEntertainment.WebApi
             });
 
 			services.AddAutomapperProfiles();
-		}
+
+			InitializeDatabase();
+        }
+
+        private void InitializeDatabase()
+        {
+	        // OrderDataContext.LoadOrder(1);
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-	        app.UseStaticFiles();
+	        app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+			app.UseStaticFiles();
 
 			if (env.IsDevelopment())
 			{
-				app.UseDeveloperExceptionPage();
+				// app.UseDeveloperExceptionPage();
 			}
 			else
 			{
